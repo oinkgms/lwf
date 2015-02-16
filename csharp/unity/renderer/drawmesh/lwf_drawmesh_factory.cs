@@ -54,13 +54,13 @@ public partial class Factory : UnityRenderer.Factory
 	public override Renderer ConstructBitmap(LWF lwf,
 		int objectId, Bitmap bitmap)
 	{
-		return new BitmapRenderer(lwf, m_bitmapContexts[objectId]);
+		return new BitmapRenderer(lwf, m_bitmapContexts[objectId], lwfObject);
 	}
 
 	public override Renderer ConstructBitmapEx(LWF lwf,
 		int objectId, BitmapEx bitmapEx)
 	{
-		return new BitmapRenderer(lwf, m_bitmapExContexts[objectId]);
+		return new BitmapRenderer(lwf, m_bitmapExContexts[objectId], lwfObject);
 	}
 
 	public override TextRenderer ConstructText(LWF lwf, int objectId, Text text)

@@ -126,7 +126,7 @@ public class UIVertexComponent : MonoBehaviour
 		gameObject.SetActive(false);
 	}
 
-	public void UpdateMesh()
+	public void UpdateMesh(LWFObject lwfObject)
 	{
 		gameObject.SetActive(true);
 
@@ -282,7 +282,7 @@ public partial class Factory : UnityRenderer.Factory
 		}
 
 		for (int i = 0; i <= meshComponentNo; ++i)
-			meshComponents[i].UpdateMesh();
+			meshComponents[i].UpdateMesh(lwfObject);
 
 		for (int i = meshComponentNo + 1; i <= usedMeshComponentNo; ++i)
 			meshComponents[i].Disable();
