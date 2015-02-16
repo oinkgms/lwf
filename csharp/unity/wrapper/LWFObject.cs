@@ -82,6 +82,10 @@ public class LWFObject : MonoBehaviour
 		}
 	}
 
+	public MaterialPropertyBlock materialProperty {
+		get { return mMaterialProperty; }
+	}
+
 	protected bool callUpdate;
 	protected RendererType rendererType;
 	protected bool executed;
@@ -93,6 +97,9 @@ public class LWFObject : MonoBehaviour
 	[HideInInspector] [SerializeField] private int mSortingOrder;
 	private bool mDirty;
 	private int mLayer;
+	private MaterialPropertyBlock mMaterialProperty;
+	private static bool mGetAdditionalColorId = false;
+	private static int mAdditionalColorId;
 
 	public LWFObject()
 	{
@@ -171,6 +178,13 @@ public class LWFObject : MonoBehaviour
 
 		if (lwfDataCallback != null && !lwfDataCallback(data))
 			return false;
+
+		if (!mGetAdditionalColorId) {
+			mAdditionalColorId = Shader.PropertyToID("_AdditionalColor");
+			mGetAdditionalColorId = true;
+		}
+		if (mMaterialProperty == null)
+			mMaterialProperty = new MaterialPropertyBlock();
 
 		RendererType rt = rendererType;
 #if UNITY_EDITOR
@@ -385,6 +399,9 @@ public class LWFObject : MonoBehaviour
 				pointY = -(int)pos.y;
 			}
 		}
+
+		//mMaterialProperty.Clear();
+		//mMaterialProperty.AddColor(mAdditionalColorId, Color.red);
 
 		UpdateLWF(Time.deltaTime, pointX, pointY, press, release);
 	}

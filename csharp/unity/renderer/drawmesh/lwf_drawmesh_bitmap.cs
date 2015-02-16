@@ -136,30 +136,34 @@ public class BitmapContext
 public class BitmapRenderer : Renderer
 {
 	BitmapContext m_context;
-	MaterialPropertyBlock m_property;
 	Material m_material;
 	Matrix4x4 m_matrix;
 	Matrix4x4 m_renderMatrix;
 	UnityEngine.Color m_colorMult;
 	UnityEngine.Color m_colorAdd;
 	int m_blendMode;
-	int m_colorId;
-	int m_additionalColorId;
+	static bool m_getId = false;
+	static int m_colorId;
+	static int m_additionalColorId;
+	LWFObject m_lwfObject;
 #if UNITY_EDITOR
 	bool m_visible;
 #endif
 
-	public BitmapRenderer(LWF lwf, BitmapContext context) : base(lwf)
+	public BitmapRenderer(LWF lwf, BitmapContext context, LWFObject lwfObj) : base(lwf)
 	{
 		m_context = context;
-		m_property = new MaterialPropertyBlock();
 		m_matrix = new Matrix4x4();
 		m_renderMatrix = new Matrix4x4();
 		m_colorMult = new UnityEngine.Color();
 		m_colorAdd = new UnityEngine.Color();
 		m_blendMode = (int)Format.Constant.BLEND_MODE_NORMAL;
-		m_colorId = Shader.PropertyToID("_Color");
-		m_additionalColorId = Shader.PropertyToID("_AdditionalColor");
+		if (!m_getId) {
+			m_colorId = Shader.PropertyToID("_Color");
+			m_additionalColorId = Shader.PropertyToID("_AdditionalColor");
+			m_getId = true;
+		}
+		m_lwfObject = lwfObj;
 	}
 
 	public override void Destruct()
@@ -196,10 +200,10 @@ public class BitmapRenderer : Renderer
 		Factory.MultiplyMatrix(ref m_renderMatrix,
 			factory.gameObject.transform.localToWorldMatrix, m_matrix);
 
-		m_property.Clear();
-		m_property.AddColor(m_colorId, m_colorMult);
+		MaterialPropertyBlock prop = m_lwfObject.materialProperty;
+		prop.AddColor(m_colorId, m_colorMult);
 		if (factory.useAdditionalColor)
-			m_property.AddColor(m_additionalColorId, m_colorAdd);
+			prop.AddColor(m_additionalColorId, m_colorAdd);
 
 		if (m_blendMode != factory.blendMode) {
 			m_blendMode = factory.blendMode;
@@ -215,7 +219,7 @@ public class BitmapRenderer : Renderer
 		Material material =
 			m_material == null ? m_context.material : m_material;
 		Graphics.DrawMesh(m_context.mesh, m_renderMatrix, material,
-			factory.gameObject.layer, factory.renderCamera, 0, m_property);
+			factory.gameObject.layer, factory.renderCamera, 0, prop);
 	}
 
 #if UNITY_EDITOR

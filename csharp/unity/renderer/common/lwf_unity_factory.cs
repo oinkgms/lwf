@@ -46,6 +46,7 @@ public partial class Factory : IRendererFactory
 	public TextureUnloader textureUnloader;
 	public string shaderName;
 	private Matrix4x4 matrix;
+	public LWFObject lwfObject;
 
 	protected Factory(Data d, GameObject gObj, float zOff, float zR, int rQOff,
 		string sLayerName, int sOrder, bool uAC, Camera renderCam,
@@ -54,6 +55,7 @@ public partial class Factory : IRendererFactory
 	{
 		data = d;
 		gameObject = gObj;
+		lwfObject = gObj.GetComponent<LWFObject>();
 		zOffset = zOff;
 		zRate = zR;
 		renderQueueOffset = rQOff;

@@ -72,14 +72,15 @@ public class CombinedMeshComponent : MonoBehaviour
 	public int updateCount;
 	public UnityEngine.MeshRenderer meshRenderer;
 	public MeshFilter meshFilter;
-	public MaterialPropertyBlock property;
 	public CombinedMeshBuffer buffer;
 	public Mesh mesh;
 	public UnityEngine.Color additionalColor;
 	public List<IMeshRenderer> renderers;
 	public int rendererCount;
 	public int rectangleCount;
-	private int additionalColorId;
+	static private bool getAdditionalColorId = false;
+	static private int additionalColorId;
+	private LWFObject lwfObject;
 
 	public void Init(Factory factory)
 	{
@@ -103,10 +104,10 @@ public class CombinedMeshComponent : MonoBehaviour
 		UpdateSortingLayerAndOrder(factory);
 		UpdateLayer(factory);
 
-		if (factory.useAdditionalColor) {
-			additionalColor = UnityEngine.Color.clear;
-			property = new MaterialPropertyBlock();
+		lwfObject = factory.lwfObject;
+		if (!getAdditionalColorId) {
 			additionalColorId = Shader.PropertyToID("_AdditionalColor");
+			getAdditionalColorId = true;
 		}
 
 		buffer = new CombinedMeshBuffer();
@@ -181,10 +182,8 @@ public class CombinedMeshComponent : MonoBehaviour
 			mesh.RecalculateBounds();
 		}
 
-		if (property != null) {
-			property.AddColor(additionalColorId, additionalColor);
-			meshRenderer.SetPropertyBlock(property);
-		}
+		lwfObject.materialProperty.AddColor(additionalColorId, additionalColor);
+		meshRenderer.SetPropertyBlock(lwfObject.materialProperty);
 	}
 
 	void OnDestroy()
@@ -288,8 +287,7 @@ public partial class Factory : UnityRenderer.Factory
 			Material componentMaterial =
 				currentMeshComponent.meshRenderer.sharedMaterial;
 			if (componentMaterial != material ||
-					(currentMeshComponent.property != null &&
-					currentMeshComponent.additionalColor != additionalColor)) {
+					currentMeshComponent.additionalColor != additionalColor) {
 				int no = ++meshComponentNo;
 				if (no >= meshComponents.Count)
 					AddMeshComponent();
