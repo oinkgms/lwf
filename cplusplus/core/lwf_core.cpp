@@ -693,6 +693,16 @@ void LWF::SetMovieCommand(vector<string> instanceNames, MovieCommand cmd)
 	ExecMovieCommand();
 }
 
+Movie *LWF::SearchAttachedMovie(string aName) const
+{
+	return rootMovie->SearchAttachedMovie(aName);
+}
+
+shared_ptr<LWF> LWF::SearchAttachedLWF(string aName) const
+{
+	return rootMovie->SearchAttachedLWF(aName);
+}
+
 bool LWF::AddAllowButton(string buttonName)
 {
 	int instId = SearchInstanceId(GetStringId(buttonName));
