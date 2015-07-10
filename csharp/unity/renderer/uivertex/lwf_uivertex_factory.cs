@@ -124,6 +124,7 @@ public class UIVertexComponent : MonoBehaviour
 		canvasRenderer.Clear();
 		gameObject.SetActive(false);
 	}
+	void OnDisable() { Disable(); }
 
 	public void UpdateMesh(LWFObject lwfObject)
 	{
