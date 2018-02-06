@@ -20,7 +20,8 @@
 
 require 'fileutils'
 
-UNITYAPP="/Applications/Unity/Unity.app/Contents"
+UNITYVERSION=ENV['UNITYVERSION'] || ""
+UNITYAPP="/Applications/Unity#{UNITYVERSION}/Unity.app/Contents"
 info = File.read("#{UNITYAPP}/Info.plist")
 info =~ /Unity version (\d)\.(\d)/
 UNITYVERDEF="UNITY_#{$1}_#{$2}"
@@ -33,10 +34,10 @@ if UNITYVERSION =~ /^4/
 else
   UIDLL="#{UNITYAPP}/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll"
 end
-LIBS="-d:#{UNITYVERDEF} -r:#{UNITYFRAMEWORKS}/Managed/UnityEngine.dll -r:#{UIDLL}"
-MONO_BIN="#{UNITYFRAMEWORKS}/Mono/bin"
+LIBS="-d:#{UNITYVERDEF} -r:#{UNITYAPP}/Managed/UnityEngine.dll -r:#{UIDLL}"
+MONO_BIN="#{UNITYAPP}/Mono/bin"
 MONO_OPTS="-target:library -debug"
-EDITOR_LIBS="#{LIBS} -r:#{UNITYFRAMEWORKS}/Managed/UnityEditor.dll -r:lwf.dll"
+EDITOR_LIBS="#{LIBS} -r:#{UNITYAPP}/Managed/UnityEditor.dll -r:lwf.dll"
 CORE="../../core"
 UNITY=".."
 RENDERER="#{UNITY}/renderer"
@@ -108,6 +109,7 @@ task :default => ["build"]
 desc "build"
 task :build do
   puts "lwf.dll:"
+  p "#{MONO_BIN}/gmcs #{LIBS} #{MONO_OPTS} -out:lwf.dll #{SRCS.join(' ')}"
   system "#{MONO_BIN}/gmcs #{LIBS} #{MONO_OPTS} -out:lwf.dll #{SRCS.join(' ')}"
   puts "lwf_editor.dll:"
   system "#{MONO_BIN}/gmcs #{EDITOR_LIBS} #{MONO_OPTS} -out:lwf_editor.dll #{EDITOR_SRCS.join(' ')}"

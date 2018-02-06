@@ -82,6 +82,13 @@ public class LWFObject : MonoBehaviour
 		}
 	}
 
+	public float playSpeed {
+		get { return mPlaySpeed; }
+		set {
+			mPlaySpeed = value;
+		}
+	}
+
 	public MaterialPropertyBlock materialProperty {
 		get { return mMaterialProperty; }
 	}
@@ -100,6 +107,7 @@ public class LWFObject : MonoBehaviour
 	private MaterialPropertyBlock mMaterialProperty;
 	private static bool mGetAdditionalColorId = false;
 	private static int mAdditionalColorId;
+	private float mPlaySpeed = 1.0f;
 
 	public LWFObject()
 	{
@@ -403,7 +411,7 @@ public class LWFObject : MonoBehaviour
 		//mMaterialProperty.Clear();
 		//mMaterialProperty.AddColor(mAdditionalColorId, Color.red);
 
-		UpdateLWF(Time.deltaTime, pointX, pointY, press, release);
+		UpdateLWF(Time.deltaTime * mPlaySpeed, pointX, pointY, press, release);
 	}
 
 	public void SetText(
